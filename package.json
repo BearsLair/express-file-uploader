@@ -1,0 +1,31 @@
+{
+  "name": "express-file-uploader",
+  "version": "1.0.0",
+  "description": "File uploader with Express JS backend, log-in (Passport Local), Prisma (PostgresSQL Database), and Multer library for file uploads/downloads.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "nodemon app.js",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BearsLair/express-file-uploader.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/BearsLair/express-file-uploader/issues"
+  },
+  "homepage": "https://github.com/BearsLair/express-file-uploader#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.7",
+    "express": "^5.3.0",
+    "prisma": "^8.0.0-rc.22"
+  }
+}
