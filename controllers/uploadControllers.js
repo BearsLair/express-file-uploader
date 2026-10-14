@@ -1,3 +1,5 @@
+import { prisma } from "../lib/prisma.js";
+
 export async function getLoginPage(req, res) {
   try {
     res.render("login");
@@ -11,5 +13,24 @@ export async function getRegistrationPage(req, res) {
     res.render("register");
   } catch (e) {
     console.error("Error retrieving registration page: ", e);
+  }
+}
+
+// Todo add encryption with bcryptjs
+export async function postRegistration(req, res) {
+  try {
+    await prisma.user.create({
+      data: {
+        username: req.body.username,
+        password: req.body.password,
+      },
+    });
+
+    console.log(`Added user '${req.body.username}' to database.`);
+
+    res.redirect("/");
+  } catch (e) {
+    console.error("Cannot post registration information", e);
+    res.redirect("/register");
   }
 }
