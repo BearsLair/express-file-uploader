@@ -7,6 +7,12 @@
   </head>
   <body>
     <h1>Your files</h1>
-    <h2>Hello, <%= user.username %>!</h2>
+    <% if (!user) {%>
+      <h2>Must be a user to view files</h2>
+      <a href="/">Back to Log In Page</a>
+    <% } else { %>
+      <h2>Hello, <%= user.username %>!</h2>
+      <a href="/log-out">Log Out</a>
+    <% } %>
   </body>
 </html>

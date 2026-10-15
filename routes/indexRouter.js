@@ -28,4 +28,13 @@ indexRouter.get("/register", getRegistrationPage);
 
 indexRouter.post("/register", postRegistration);
 
+indexRouter.get("/log-out", function (req, res, next) {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
+  });
+});
+
 export default indexRouter;
