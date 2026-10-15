@@ -1,4 +1,5 @@
 import { prisma } from "../lib/prisma.js";
+import bcrypt from "bcryptjs";
 
 export async function getLoginPage(req, res) {
   try {
@@ -19,10 +20,12 @@ export async function getRegistrationPage(req, res) {
 // Todo: add encryption with bcryptjs
 export async function postRegistration(req, res) {
   try {
+    const hash = bcrypt.hashSync(req.body.password, 10);
+
     await prisma.user.create({
       data: {
         username: req.body.username,
-        password: req.body.password,
+        password: hash,
       },
     });
 
