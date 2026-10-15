@@ -16,7 +16,7 @@ export async function getRegistrationPage(req, res) {
   }
 }
 
-// Todo add encryption with bcryptjs
+// Todo: add encryption with bcryptjs
 export async function postRegistration(req, res) {
   try {
     await prisma.user.create({

@@ -26,3 +26,10 @@ model Files {
   user User @relation(fields: [userId], references: [id])
   userId String
 }
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String   
+  expiresAt   DateTime
+}
