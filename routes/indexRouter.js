@@ -1,6 +1,7 @@
 import { Router } from "express";
 const indexRouter = Router();
 import passport from "passport";
+import upload from "../config/diskStorage.js";
 
 import {
   getLoginPage,
@@ -20,6 +21,14 @@ indexRouter.post(
 );
 
 indexRouter.get("/file_viewer", (req, res) => {
+  res.render("fileViewer", { user: req.user });
+});
+
+indexRouter.get("/upload", (req, res) => {
+  res.render("upload", { user: req.user });
+});
+
+indexRouter.post("/upload", upload.single("file"), (req, res) => {
   res.render("fileViewer", { user: req.user });
 });
 

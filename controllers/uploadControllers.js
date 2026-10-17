@@ -37,3 +37,5 @@ export async function postRegistration(req, res) {
     res.redirect("/register");
   }
 }
+
+export async function postFileUpload(req, res) {}
