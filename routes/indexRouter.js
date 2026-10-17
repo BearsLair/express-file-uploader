@@ -7,6 +7,7 @@ import {
   getLoginPage,
   getRegistrationPage,
   postRegistration,
+  prismaFileUpload,
 } from "../controllers/uploadControllers.js";
 
 indexRouter.get("/", getLoginPage);
@@ -28,9 +29,7 @@ indexRouter.get("/upload", (req, res) => {
   res.render("upload", { user: req.user });
 });
 
-indexRouter.post("/upload", upload.single("file"), (req, res) => {
-  res.render("fileViewer", { user: req.user });
-});
+indexRouter.post("/upload", upload.single("file"), prismaFileUpload);
 
 // TODO: Add form validators
 indexRouter.get("/register", getRegistrationPage);

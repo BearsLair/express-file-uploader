@@ -38,4 +38,18 @@ export async function postRegistration(req, res) {
   }
 }
 
-export async function postFileUpload(req, res) {}
+export async function prismaFileUpload(req, res) {
+  try {
+    await prisma.file.create({
+      data: {
+        name: req.file.originalname,
+        url: req.file.path,
+        userId: req.user.id,
+      },
+    });
+
+    res.render("fileViewer", { user: req.user });
+  } catch (e) {
+    console.error("Error updating prisma with file upload info: ", e);
+  }
+}
