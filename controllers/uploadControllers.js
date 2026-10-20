@@ -1,5 +1,6 @@
 import { prisma } from "../lib/prisma.js";
 import bcrypt from "bcryptjs";
+import fs from "fs/promises";
 
 export async function getLoginPage(req, res) {
   try {
@@ -38,18 +39,49 @@ export async function postRegistration(req, res) {
   }
 }
 
+export async function displayFiles(req, res) {
+  try {
+    const files = await prisma.file.findMany({
+      where: {
+        userId: req.user.id,
+      },
+    });
+
+    res.render("fileViewer", { user: req.user, files: files });
+  } catch (e) {
+    console.error("Error retrieving files: ", e);
+  }
+}
+
 export async function prismaFileUpload(req, res) {
   try {
     await prisma.file.create({
       data: {
         name: req.file.originalname,
-        url: req.file.path,
+        localFile: req.file.path,
+        url: "server url placeholder",
         userId: req.user.id,
       },
     });
-
-    res.render("fileViewer", { user: req.user });
   } catch (e) {
     console.error("Error updating prisma with file upload info: ", e);
+  } finally {
+    const filePath = req.file.path;
+
+    try {
+      // Check if file exists
+      await fs.access(filePath);
+
+      // Delete file
+      await fs.unlink(filePath);
+
+      res.redirect("/file_viewer");
+    } catch (err) {
+      if (err.code === "ENOENT") {
+        console.log("File does not exist");
+      } else {
+        console.error("Error deleting file: ", err);
+      }
+    }
   }
 }

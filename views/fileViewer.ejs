@@ -15,5 +15,12 @@
       <a href="/upload">Upload File</a>
       <a href="/log-out">Log Out</a>
     <% } %>
+    <% if (files.length === 0) { %>
+      <p>No Files to display yet.</p>
+    <% } else {%>
+      <% files.map(file => { %>
+        <p>File: <%= file.name %> <a href="<%= file.url %>" >Download</a></p>
+        <% }) %>
+      <% } %>
   </body>
 </html>

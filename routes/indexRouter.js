@@ -8,6 +8,7 @@ import {
   getRegistrationPage,
   postRegistration,
   prismaFileUpload,
+  displayFiles,
 } from "../controllers/uploadControllers.js";
 
 indexRouter.get("/", getLoginPage);
@@ -21,9 +22,7 @@ indexRouter.post(
   }),
 );
 
-indexRouter.get("/file_viewer", (req, res) => {
-  res.render("fileViewer", { user: req.user });
-});
+indexRouter.get("/file_viewer", displayFiles);
 
 indexRouter.get("/upload", (req, res) => {
   res.render("upload", { user: req.user });
