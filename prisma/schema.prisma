@@ -24,6 +24,7 @@ model User {
   username String
   password String
   files File[]
+  folders Folders[]
 }
 
 model File {
@@ -32,6 +33,13 @@ model File {
   localFile String
   url String
   uploadAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id])
+  userId String
+}
+
+model Folders {
+  id String @id @default(uuid())
+  structure String
   user User @relation(fields: [userId], references: [id])
   userId String
 }

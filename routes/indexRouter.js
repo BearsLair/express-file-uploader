@@ -9,6 +9,7 @@ import {
   postRegistration,
   prismaFileUpload,
   displayFiles,
+  fileDetails,
 } from "../controllers/uploadControllers.js";
 
 indexRouter.get("/", getLoginPage);
@@ -43,5 +44,7 @@ indexRouter.get("/log-out", function (req, res, next) {
     res.redirect("/");
   });
 });
+
+indexRouter.get("/details/:id", fileDetails);
 
 export default indexRouter;

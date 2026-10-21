@@ -85,3 +85,21 @@ export async function prismaFileUpload(req, res) {
     }
   }
 }
+
+export async function fileDetails(req, res) {
+  const fileId = req.params.id;
+
+  try {
+    const file = await prisma.file.findFirst({
+      where: {
+        id: fileId,
+      },
+    });
+
+    console.log("File retrieved: ", file);
+
+    res.render("details", { file: file });
+  } catch (err) {
+    console.error("Error retrieving file details: ", err);
+  }
+}

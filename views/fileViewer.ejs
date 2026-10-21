@@ -19,7 +19,7 @@
       <p>No Files to display yet.</p>
     <% } else {%>
       <% files.map(file => { %>
-        <p>File: <%= file.name %> <a href="<%= file.url %>" >Download</a></p>
+        <p>File: <%= file.name %> <a href=<%= "/details/" + file.id %> >Details</a></p>
         <% }) %>
       <% } %>
   </body>
