@@ -1,6 +1,7 @@
 import { prisma } from "../lib/prisma.js";
 import bcrypt from "bcryptjs";
 import fs from "fs/promises";
+import { v2 as cloudinary } from "cloudinary";
 
 export async function getLoginPage(req, res) {
   try {
@@ -54,17 +55,24 @@ export async function displayFiles(req, res) {
 }
 
 export async function prismaFileUpload(req, res) {
+  let uploadUrl;
+
   try {
+    // Upload file to cloudinary
+    await cloudinary.uploader
+      .upload(req.file.path)
+      .then((result) => (uploadUrl = result.url));
+
+    // Add prisma upload entry
     await prisma.file.create({
       data: {
         name: req.file.originalname,
-        localFile: req.file.path,
-        url: "server url placeholder",
+        url: uploadUrl,
         userId: req.user.id,
       },
     });
   } catch (e) {
-    console.error("Error updating prisma with file upload info: ", e);
+    console.error("Error updating prisma/upload to cloudinary: ", e);
   } finally {
     const filePath = req.file.path;
 
