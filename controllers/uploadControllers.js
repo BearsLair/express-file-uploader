@@ -24,10 +24,19 @@ export async function postRegistration(req, res) {
   try {
     const hash = bcrypt.hashSync(req.body.password, 10);
 
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         username: req.body.username,
         password: hash,
+      },
+    });
+
+    console.log("user data: ", user);
+
+    await prisma.folders.create({
+      data: {
+        contents: [],
+        userId: user.id,
       },
     });
 
@@ -51,6 +60,8 @@ export async function displayFiles(req, res) {
     res.render("fileViewer", { user: req.user, files: files });
   } catch (e) {
     console.error("Error retrieving files: ", e);
+
+    // TODO: Add need to login page
   }
 }
 
