@@ -25,11 +25,7 @@ indexRouter.post(
 
 indexRouter.get("/file_viewer", displayFiles);
 
-indexRouter.get("/upload", (req, res) => {
-  res.render("upload", { user: req.user });
-});
-
-indexRouter.post("/upload", upload.single("file"), prismaFileUpload);
+indexRouter.post("/upload/:folder", upload.single("file"), prismaFileUpload);
 
 // TODO: Add form validators
 indexRouter.get("/register", getRegistrationPage);

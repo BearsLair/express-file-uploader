@@ -51,13 +51,23 @@ export async function postRegistration(req, res) {
 
 export async function displayFiles(req, res) {
   try {
+    const folders = await prisma.folders.findMany({
+      where: {
+        userId: req.user.id,
+      },
+    });
+
     const files = await prisma.file.findMany({
       where: {
         userId: req.user.id,
       },
     });
 
-    res.render("fileViewer", { user: req.user, files: files });
+    res.render("fileViewer", {
+      user: req.user,
+      folders: folders,
+      files: files,
+    });
   } catch (e) {
     console.error("Error retrieving files: ", e);
 
@@ -67,6 +77,7 @@ export async function displayFiles(req, res) {
 
 export async function prismaFileUpload(req, res) {
   let uploadUrl;
+  let folder;
 
   try {
     // Upload file to cloudinary
@@ -75,11 +86,38 @@ export async function prismaFileUpload(req, res) {
       .then((result) => (uploadUrl = result.url));
 
     // Add prisma upload entry
-    await prisma.file.create({
+    const prismaUploadData = await prisma.file.create({
       data: {
         name: req.file.originalname,
         url: uploadUrl,
         userId: req.user.id,
+      },
+    });
+
+    if (req.params.folder === "null") {
+      folder = await prisma.folders.findFirst({
+        where: {
+          userId: req.user.id,
+          name: "null",
+        },
+      });
+
+      console.log(("folder data: ", folder));
+
+      console.log("folder contents: ", folder.contents);
+
+      folder.contents.push({ id: prismaUploadData.id, type: "file" });
+
+      console.log("folder contents after addition: ", folder.contents);
+    }
+
+    // TODO: userId not right....need id.
+    await prisma.folders.update({
+      where: {
+        id: folder.id,
+      },
+      data: {
+        contents: folder.contents,
       },
     });
   } catch (e) {
