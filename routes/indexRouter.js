@@ -10,6 +10,7 @@ import {
   prismaFileUpload,
   displayFiles,
   fileDetails,
+  createFolder,
 } from "../controllers/uploadControllers.js";
 
 indexRouter.get("/", getLoginPage);
@@ -42,5 +43,7 @@ indexRouter.get("/log-out", function (req, res, next) {
 });
 
 indexRouter.get("/details/:id", fileDetails);
+
+indexRouter.post("/file_view/newFolder", createFolder);
 
 export default indexRouter;

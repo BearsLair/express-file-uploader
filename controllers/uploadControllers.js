@@ -160,3 +160,20 @@ export async function fileDetails(req, res) {
     console.error("Error retrieving file details: ", err);
   }
 }
+
+export async function createFolder(req, res) {
+  const folderName = req.body.folder;
+
+  console.log("folder name: ", folderName);
+
+  try {
+    console.log("trying to post new folder");
+    await prisma.folders.create({
+      data: { name: req.body.folder, contents: [], userId: req.user.id },
+    });
+
+    res.redirect("/file_viewer");
+  } catch (err) {
+    console.error("Error creating folder", err);
+  }
+}

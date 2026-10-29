@@ -7,6 +7,7 @@
   </head>
   <body>
     <h1>Your Files</h1>
+    <div style="display: flex; flex-direction: column;">
     <% if (!user) {%>
       <h2>Must be a user to view files</h2>
       <a href="/">Back to Log In Page</a>
@@ -17,30 +18,27 @@
       <input type="file" name="file" />
       <button type="submit">Submit File</button>
       </form>
-      <form>
+      <form action="/file_view/newFolder" method="POST">
       <label for="folder">Add Folder</label>
       <input type="text" name="folder" />
       <button type="submit">Add Folder</button>
     </form>
     <% } %>
-
     <% if (folders.length === 1) { %>
       <p>No folders created yet.</p>
     <% } else {%>
       <% folders.map(folder => { %>
         <% if (folder.name !== "null") { %>
-        <p>📁<%= folder.name %> <a href=<%= "/folder/" + folder.name %> >View Folder</a></p>
+        <a href=<%= "/folder/" + folder.name %> >📁<%= folder.name %> </a>
         <% }}) %>
       <% } %>
-
     <% if (files.length === 0) { %>
       <p>No Files to display yet.</p>
     <% } else {%>
       <% files.map(file => { %>
-        <p>File: <%= file.name %> <a href=<%= "/details/" + file.id %> >Details</a></p>
+        <a href=<%= "/details/" + file.id %> ><%= file.name %></a>
         <% }) %>
       <% } %>
-
-    
+    </div>
   </body>
 </html>
