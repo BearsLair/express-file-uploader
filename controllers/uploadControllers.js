@@ -36,6 +36,7 @@ export async function postRegistration(req, res) {
     await prisma.folders.create({
       data: {
         contents: [],
+        home: true,
         userId: user.id,
       },
     });
@@ -49,30 +50,53 @@ export async function postRegistration(req, res) {
   }
 }
 
-export async function displayFiles(req, res) {
+export async function displayHomeDirectory(req, res) {
+  let homeFolder = [];
+
+  console.log("req.user.id: ", req.user.id);
   try {
-    const folders = await prisma.folders.findMany({
+    homeFolder = await prisma.folders.findFirst({
       where: {
         userId: req.user.id,
+        home: true,
       },
-    });
-
-    const files = await prisma.file.findMany({
-      where: {
-        userId: req.user.id,
-      },
-    });
-
-    res.render("fileViewer", {
-      user: req.user,
-      folders: folders,
-      files: files,
     });
   } catch (e) {
     console.error("Error retrieving files: ", e);
-
-    // TODO: Add need to login page
   }
+
+  console.log("homeFolder...", homeFolder);
+
+  let folders = [];
+  let files = [];
+  let content = {};
+
+  for (let i = 0; i < homeFolder.length; i++) {
+    if (homeFolder[i].type === "folder") {
+      content = await prisma.file.findFirst({
+        where: {
+          id: homeFolder[i].id,
+        },
+      });
+
+      folders.push(content);
+    }
+    if (homeFolder[i].type === "file") {
+      content = await prisma.file.findFirst({
+        where: {
+          id: homeFolder[i].id,
+        },
+      });
+
+      files.push(content);
+    }
+  }
+
+  res.render("fileViewer", {
+    user: req.user,
+    folders: folders,
+    files: files,
+  });
 }
 
 export async function prismaFileUpload(req, res) {
@@ -94,11 +118,11 @@ export async function prismaFileUpload(req, res) {
       },
     });
 
-    if (req.params.folder === "null") {
+    if (req.params.folder === "home") {
       folder = await prisma.folders.findFirst({
         where: {
           userId: req.user.id,
-          name: "null",
+          name: "home",
         },
       });
 

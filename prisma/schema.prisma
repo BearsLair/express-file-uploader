@@ -36,10 +36,12 @@ model File {
   userId String
 }
 
+// TODO: Home directory boolean
 model Folders {
   id String @id @default(uuid())
   name String @default("null")
   contents Json[]
+  home Boolean @default(false)
   user User @relation(fields: [userId], references: [id])
   userId String
 }

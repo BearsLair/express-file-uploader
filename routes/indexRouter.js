@@ -8,7 +8,7 @@ import {
   getRegistrationPage,
   postRegistration,
   prismaFileUpload,
-  displayFiles,
+  displayHomeDirectory,
   fileDetails,
   createFolder,
   viewFolder,
@@ -25,7 +25,7 @@ indexRouter.post(
   }),
 );
 
-indexRouter.get("/file_viewer", displayFiles);
+indexRouter.get("/file_viewer", displayHomeDirectory);
 
 indexRouter.post("/upload/:folder", upload.single("file"), prismaFileUpload);
 
