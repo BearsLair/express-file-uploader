@@ -252,43 +252,4 @@ export async function viewFolder(req, res) {
     folders: folders,
     files: files,
   });
-
-  //     console.log("data sent to browser: ", folderContents);
-
-  //     let content = [];
-
-  //     if (data.contents.length > 0) {
-  //       data.contents.map(async (item) => {
-  //         if (item.type === "folder") {
-  //           folders.push(item);
-  //         }
-  //         if (item.type === "file") {
-  //           await prisma.file
-  //             .findFirst({
-  //               where: {
-  //                 id: item.id,
-  //               },
-  //             })
-  //             .then((result) => {
-  //               console.log("result of current item: ", result);
-  //               files.push(result);
-  //             });
-  //           console.log("content to add: ", content);
-  //           files.push(content);
-  //         }
-  //       });
-  //     }
-
-  //     console.log("folder array: ", folders);
-  //     console.log("files array: ", files);
-  //   } catch (err) {
-  //     console.error("Error retrieving folder content: ", err);
-  //   } finally {
-  //     res.render("folder", {
-  //       id: data.id,
-  //       name: data.name,
-  //       folders: folders,
-  //       files: files,
-  //     });
-  //   }
 }
