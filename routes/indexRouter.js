@@ -19,13 +19,13 @@ indexRouter.get("/", getLoginPage);
 indexRouter.post(
   "/login",
   passport.authenticate("local", {
-    successRedirect: "/file_viewer",
+    successRedirect: "/home",
     failureRedirect: "/",
     failureMessage: true,
   }),
 );
 
-indexRouter.get("/file_viewer", displayHomeDirectory);
+indexRouter.get("/home", displayHomeDirectory);
 
 indexRouter.post("/upload/:folder", upload.single("file"), prismaFileUpload);
 

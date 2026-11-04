@@ -19,7 +19,6 @@ export async function getRegistrationPage(req, res) {
   }
 }
 
-// Todo: add encryption with bcryptjs
 export async function postRegistration(req, res) {
   try {
     const hash = bcrypt.hashSync(req.body.password, 10);
@@ -213,7 +212,7 @@ export async function createFolder(req, res) {
 
     res.redirect("/file_viewer");
   } catch (err) {
-    console.error("Error creating folder", err);
+    console.error("Error creating folder: ", err);
   }
 }
 
