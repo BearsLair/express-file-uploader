@@ -14,7 +14,7 @@
     <% } else { %>
       <h2>Hello, <%= user.username %>!</h2>
       <a href="/log-out">Log Out</a>
-      <form style="margin-top: 15px;" action="/upload/null" method="POST" enctype="multipart/form-data">
+      <form style="margin-top: 15px;" action="/upload/home" method="POST" enctype="multipart/form-data">
       <input type="file" name="file" />
       <button type="submit">Submit File</button>
       </form>
@@ -28,10 +28,8 @@
       <p>No folders created yet.</p>
     <% } else {%>
       <% folders.map(folder => { %>
-        <% if (folder.name !== "null") { %>
         <a href=<%= "/folder/" + folder.id %> >📁<%= folder.name %> </a>
-        <% }}) %>
-      <% } %>
+        <% })} %>
     <% if (files.length === 0) { %>
       <p>No Files to display yet.</p>
     <% } else {%>

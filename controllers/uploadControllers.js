@@ -84,7 +84,7 @@ export async function displayHomeDirectory(req, res) {
     if (homeFolder.contents[i].type === "file") {
       content = await prisma.file.findFirst({
         where: {
-          id: homeFolder[i].id,
+          id: homeFolder.contents[i].id,
         },
       });
 
@@ -153,7 +153,6 @@ export async function prismaFileUpload(req, res) {
       console.log("folder contents after addition: ", folder.contents);
     }
 
-    // TODO: userId not right....need id.
     await prisma.folders.update({
       where: {
         id: folder.id,
@@ -174,7 +173,11 @@ export async function prismaFileUpload(req, res) {
       // Delete file
       await fs.unlink(filePath);
 
-      res.redirect("/file_viewer");
+      if (req.params.folder === "home") {
+        res.redirect("/home");
+      } else {
+        res.redirect("/folder/" + req.params.folder);
+      }
     } catch (err) {
       if (err.code === "ENOENT") {
         console.log("File does not exist");

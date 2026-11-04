@@ -13,10 +13,7 @@
       <button type="submit">Submit File</button>
     </form>
     <% if (folders > 0) { %>
-      <% folders.map(folder => { %>
-        <% if (folder.name !== "null") { %>
         <a href=<%= "/folder/" + folder.id %> >📁<%= folder.name %> </a>
-        <% }}) %>
       <% } %>
     <% if (files.length > 0) {%>
       <% files.map(file => { %>
