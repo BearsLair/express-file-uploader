@@ -50,7 +50,7 @@ export async function postRegistration(req, res) {
 }
 
 export async function displayHomeDirectory(req, res) {
-  let homeFolder = [];
+  let homeFolder = {};
 
   console.log("req.user.id: ", req.user.id);
   try {
@@ -64,23 +64,24 @@ export async function displayHomeDirectory(req, res) {
     console.error("Error retrieving files: ", e);
   }
 
-  console.log("homeFolder...", homeFolder);
+  console.log("homeFolder: ", homeFolder);
 
   let folders = [];
   let files = [];
   let content = {};
 
-  for (let i = 0; i < homeFolder.length; i++) {
-    if (homeFolder[i].type === "folder") {
-      content = await prisma.file.findFirst({
+  for (let i = 0; i < homeFolder.contents.length; i++) {
+    if (homeFolder.contents[i].type === "folder") {
+      content = await prisma.folders.findFirst({
         where: {
-          id: homeFolder[i].id,
+          id: homeFolder.contents[i].id,
         },
       });
+      console.log("content pushed: ", content);
 
       folders.push(content);
     }
-    if (homeFolder[i].type === "file") {
+    if (homeFolder.contents[i].type === "file") {
       content = await prisma.file.findFirst({
         where: {
           id: homeFolder[i].id,
@@ -90,6 +91,9 @@ export async function displayHomeDirectory(req, res) {
       files.push(content);
     }
   }
+
+  console.log("folders: ", folders);
+  console.log("files: ", files);
 
   res.render("fileViewer", {
     user: req.user,
@@ -201,19 +205,46 @@ export async function fileDetails(req, res) {
 
 export async function createFolder(req, res) {
   const folderName = req.body.folder;
+  const currentFolder = req.params.current_folder;
+  let currFolderData = {};
 
-  console.log("folder name: ", folderName);
-
-  try {
-    console.log("trying to post new folder");
-    await prisma.folders.create({
-      data: { name: req.body.folder, contents: [], userId: req.user.id },
+  if (currentFolder === "home") {
+    currFolderData = await prisma.folders.findFirst({
+      where: {
+        userId: req.user.id,
+        home: true,
+      },
     });
-
-    res.redirect("/file_viewer");
-  } catch (err) {
-    console.error("Error creating folder: ", err);
+  } else {
+    currFolderData = await prisma.folders.findFirst({
+      where: {
+        id: currentFolder,
+      },
+    });
   }
+
+  let contents = currFolderData.contents;
+
+  const newFolder = await prisma.folders.create({
+    data: {
+      name: folderName,
+      contents: [],
+      userId: req.user.id,
+    },
+  });
+
+  contents.push({ id: newFolder.id, type: "folder" });
+
+  const results = await prisma.folders.update({
+    where: {
+      id: currFolderData.id,
+    },
+    data: {
+      contents: contents,
+    },
+  });
+
+  res.redirect("/home");
 }
 
 export async function viewFolder(req, res) {

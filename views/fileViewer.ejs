@@ -18,13 +18,13 @@
       <input type="file" name="file" />
       <button type="submit">Submit File</button>
       </form>
-      <form style="margin-bottom: 15px;" action="/file_view/newFolder" method="POST">
+      <form style="margin-bottom: 15px;" action="/newFolder/home" method="POST">
       <label for="folder">Add Folder</label>
       <input type="text" name="folder" />
       <button type="submit">Add Folder</button>
     </form>
     <% } %>
-    <% if (folders.length === 1) { %>
+    <% if (folders.length === 0) { %>
       <p>No folders created yet.</p>
     <% } else {%>
       <% folders.map(folder => { %>

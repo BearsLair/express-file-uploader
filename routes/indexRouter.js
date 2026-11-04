@@ -45,7 +45,7 @@ indexRouter.get("/log-out", function (req, res, next) {
 
 indexRouter.get("/details/:id", fileDetails);
 
-indexRouter.post("/file_view/newFolder", createFolder);
+indexRouter.post("/newFolder/:current_folder", createFolder);
 
 indexRouter.get("/folder/:folder", viewFolder);
 
