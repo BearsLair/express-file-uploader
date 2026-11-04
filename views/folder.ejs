@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>File Viewer - Folder</title>
+  </head>
+  <body>
+    <h1>In Folder: 📁<%= name %></h1>
+    <a href="/file_viewer">Back to File Directory</a>
+    <form style="margin-top: 15px;" action=<%= "/upload/" + id %> method="POST" enctype="multipart/form-data">
+      <input type="file" name="file" />
+      <button type="submit">Submit File</button>
+    </form>
+    <% if (folders > 0) { %>
+      <% folders.map(folder => { %>
+        <% if (folder.name !== "null") { %>
+        <a href=<%= "/folder/" + folder.id %> >📁<%= folder.name %> </a>
+        <% }}) %>
+      <% } %>
+    <% if (files.length > 0) {%>
+      <% files.map(file => { %>
+        <a style="margin-left: 10px;" href=<%= "/details/" + file.id %> ><%= file.name %></a>
+        <% }) %>
+      <% } %>
+  </body>
+</html>

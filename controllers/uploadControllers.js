@@ -109,6 +109,21 @@ export async function prismaFileUpload(req, res) {
       folder.contents.push({ id: prismaUploadData.id, type: "file" });
 
       console.log("folder contents after addition: ", folder.contents);
+    } else {
+      folder = await prisma.folders.findFirst({
+        where: {
+          userId: req.user.id,
+          id: req.params.folder,
+        },
+      });
+
+      console.log(("folder data: ", folder));
+
+      console.log("folder contents: ", folder.contents);
+
+      folder.contents.push({ id: prismaUploadData.id, type: "file" });
+
+      console.log("folder contents after addition: ", folder.contents);
     }
 
     // TODO: userId not right....need id.
@@ -176,4 +191,104 @@ export async function createFolder(req, res) {
   } catch (err) {
     console.error("Error creating folder", err);
   }
+}
+
+export async function viewFolder(req, res) {
+  const folderId = req.params.folder;
+
+  let data = {};
+  let folders = [];
+  let files = [];
+
+  try {
+    await prisma.folders
+      .findFirst({
+        where: {
+          id: folderId,
+        },
+      })
+      .then((result) => {
+        console.log("result... ", result);
+        data = result;
+      });
+
+    console.log("final data: ", data);
+  } catch (err) {
+    console.error("Error, retrieving folder", err);
+  }
+
+  const folderContents = data.contents;
+  console.log(folderContents);
+
+  let content = {};
+
+  for (let i = 0; i < folderContents.length; i++) {
+    if (folderContents[i].type === "folder") {
+      content = await prisma.file.findFirst({
+        where: {
+          id: folderContents[i].id,
+        },
+      });
+
+      folders.push(content);
+    }
+    if (folderContents[i].type === "file") {
+      content = await prisma.file.findFirst({
+        where: {
+          id: folderContents[i].id,
+        },
+      });
+
+      files.push(content);
+    }
+  }
+
+  console.log("folders array...", folders);
+  console.log("files array...", files);
+
+  res.render("folder", {
+    id: data.id,
+    name: data.name,
+    folders: folders,
+    files: files,
+  });
+
+  //     console.log("data sent to browser: ", folderContents);
+
+  //     let content = [];
+
+  //     if (data.contents.length > 0) {
+  //       data.contents.map(async (item) => {
+  //         if (item.type === "folder") {
+  //           folders.push(item);
+  //         }
+  //         if (item.type === "file") {
+  //           await prisma.file
+  //             .findFirst({
+  //               where: {
+  //                 id: item.id,
+  //               },
+  //             })
+  //             .then((result) => {
+  //               console.log("result of current item: ", result);
+  //               files.push(result);
+  //             });
+  //           console.log("content to add: ", content);
+  //           files.push(content);
+  //         }
+  //       });
+  //     }
+
+  //     console.log("folder array: ", folders);
+  //     console.log("files array: ", files);
+  //   } catch (err) {
+  //     console.error("Error retrieving folder content: ", err);
+  //   } finally {
+  //     res.render("folder", {
+  //       id: data.id,
+  //       name: data.name,
+  //       folders: folders,
+  //       files: files,
+  //     });
+  //   }
 }

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>File Uploader - File Viewer</title>
+    <title>File Viewer</title>
   </head>
   <body>
     <h1>Your Files</h1>
@@ -14,11 +14,11 @@
     <% } else { %>
       <h2>Hello, <%= user.username %>!</h2>
       <a href="/log-out">Log Out</a>
-      <form action="/upload/null" method="POST" enctype="multipart/form-data">
+      <form style="margin-top: 15px;" action="/upload/null" method="POST" enctype="multipart/form-data">
       <input type="file" name="file" />
       <button type="submit">Submit File</button>
       </form>
-      <form action="/file_view/newFolder" method="POST">
+      <form style="margin-bottom: 15px;" action="/file_view/newFolder" method="POST">
       <label for="folder">Add Folder</label>
       <input type="text" name="folder" />
       <button type="submit">Add Folder</button>
@@ -29,14 +29,14 @@
     <% } else {%>
       <% folders.map(folder => { %>
         <% if (folder.name !== "null") { %>
-        <a href=<%= "/folder/" + folder.name %> >📁<%= folder.name %> </a>
+        <a href=<%= "/folder/" + folder.id %> >📁<%= folder.name %> </a>
         <% }}) %>
       <% } %>
     <% if (files.length === 0) { %>
       <p>No Files to display yet.</p>
     <% } else {%>
       <% files.map(file => { %>
-        <a href=<%= "/details/" + file.id %> ><%= file.name %></a>
+        <a style="margin-left: 10px;" href=<%= "/details/" + file.id %> ><%= file.name %></a>
         <% }) %>
       <% } %>
     </div>
