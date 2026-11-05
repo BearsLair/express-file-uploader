@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>File Details</title>
   </head>
-  <body>
+  <body style="height: 100vh; width: 100%; background: #e0e0e0; background: linear-gradient(172deg, rgba(224, 224, 224, 1) 0%, rgba(29, 107, 171, 1) 84%, rgba(45, 97, 140, 1) 94%, rgba(82, 82, 82, 1) 100%);">
     <h1>File Details</h1>
     <h2><%= file.name %></h2>
     <p>Uploaded at: <%= file.uploadAt %></p>
     <a href=<%= file.url %>>View File</a>
-    <a href="/file_viewer">Return to File Viewer</a>
+    <a href="/home">Return to File Viewer</a>
     
   </body>
 </html>

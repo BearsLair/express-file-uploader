@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>File Viewer - Folder</title>
   </head>
-  <body>
+  <body style="height: 100vh; width: 100%; background: #e0e0e0; background: linear-gradient(172deg, rgba(224, 224, 224, 1) 0%, rgba(29, 107, 171, 1) 84%, rgba(45, 97, 140, 1) 94%, rgba(82, 82, 82, 1) 100%);">
     <h1>In Folder: 📁<%= name %></h1>
-    <a href="/home">Back to File Directory</a>
-    <form style="margin-top: 15px;" action=<%= "/upload/" + id %> method="POST" enctype="multipart/form-data">
+    <a href="/home">Back to Home Directory</a>
+    <form style="margin-top: 15px; margin-bottom: 10px;" action=<%= "/upload/" + id %> method="POST" enctype="multipart/form-data">
+      <p style="margin-bottom: 0;">Add File to Current Folder</p>
       <input type="file" name="file" />
       <button type="submit">Submit File</button>
     </form>
