@@ -105,17 +105,22 @@ export async function displayHomeDirectory(req, res) {
 export async function prismaFileUpload(req, res) {
   let uploadUrl;
   let folder;
+  let publicId;
 
   try {
     // Upload file to cloudinary
-    await cloudinary.uploader
-      .upload(req.file.path)
-      .then((result) => (uploadUrl = result.url));
+    await cloudinary.uploader.upload(req.file.path).then((result) => {
+      uploadUrl = result.url;
+      publicId = result.public_id;
+    });
+
+    console.log("uploadUrl: ", uploadUrl, "publicId: ", publicId);
 
     // Add prisma upload entry
     const prismaUploadData = await prisma.file.create({
       data: {
         name: req.file.originalname,
+        publicId: publicId,
         url: uploadUrl,
         userId: req.user.id,
       },

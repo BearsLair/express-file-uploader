@@ -30,6 +30,7 @@ model User {
 model File {
   id String @id @default(uuid())
   name String
+  publicId String
   url String
   uploadAt DateTime @default(now())
   user User @relation(fields: [userId], references: [id])
