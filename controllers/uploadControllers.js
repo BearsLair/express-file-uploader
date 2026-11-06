@@ -59,8 +59,6 @@ export async function displayHomeDirectory(req, res) {
     console.error("Error retrieving files: ", e);
   }
 
-  console.log("homeFolder", homeFolder);
-
   let folders = [];
   let files = [];
   let content = {};
@@ -193,7 +191,7 @@ export async function fileDetails(req, res) {
     console.error("Error retrieving file details: ", err);
   }
 }
-
+// TODO: MUST POINT BACK TO CONTAINING FOLDER
 export async function createFolder(req, res) {
   const folderName = req.body.folder;
   const currentFolder = req.params.current_folder;
@@ -349,5 +347,28 @@ export async function deleteFile(req, res) {
     res.redirect("/home");
   } catch (err) {
     console.error("Error deleting file: ", err);
+  }
+}
+
+// TODO: MUST POINT BACK TO CONTAINING FOLDER
+export async function deleteFolder(req, res) {
+  try {
+    const folder = await prisma.folders.findFirst({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    console.log("folder: ", folder);
+
+    // prisma.folders.delete({
+    //   where: {
+    //     id: req.params.id,
+    //   },
+    // });
+
+    res.redirect("/home");
+  } catch (err) {
+    console.error("Error deleting folder: ", err);
   }
 }
