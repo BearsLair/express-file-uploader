@@ -292,7 +292,7 @@ export async function viewFolder(req, res) {
   });
 }
 
-export async function deleteFiles(req, res) {
+export async function deleteFile(req, res) {
   try {
     // Find file to delete in Prisma File db
     const fileToDelete = await prisma.file.findFirst({
