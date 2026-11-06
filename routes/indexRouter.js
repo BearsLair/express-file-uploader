@@ -13,6 +13,7 @@ import {
   createFolder,
   viewFolder,
   deleteFile,
+  deleteFolder,
 } from "../controllers/uploadControllers.js";
 
 indexRouter.get("/", getLoginPage);
@@ -52,6 +53,6 @@ indexRouter.get("/folder/:folder", viewFolder);
 
 indexRouter.get("/delete/:id", deleteFile);
 
-indexRouter.get("/deleteFolder/:id");
+indexRouter.get("/deleteFolder/:id", deleteFolder);
 
 export default indexRouter;
