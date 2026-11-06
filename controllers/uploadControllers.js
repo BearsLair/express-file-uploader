@@ -116,16 +116,6 @@ export async function prismaFileUpload(req, res) {
 
     console.log("uploadUrl: ", uploadUrl, "publicId: ", publicId);
 
-    // Add prisma upload entry
-    const prismaUploadData = await prisma.file.create({
-      data: {
-        name: req.file.originalname,
-        publicId: publicId,
-        url: uploadUrl,
-        userId: req.user.id,
-      },
-    });
-
     if (req.params.folder === "home") {
       folder = await prisma.folders.findFirst({
         where: {
@@ -133,14 +123,6 @@ export async function prismaFileUpload(req, res) {
           name: "home",
         },
       });
-
-      console.log(("folder data: ", folder));
-
-      console.log("folder contents: ", folder.contents);
-
-      folder.contents.push({ id: prismaUploadData.id, type: "file" });
-
-      console.log("folder contents after addition: ", folder.contents);
     } else {
       folder = await prisma.folders.findFirst({
         where: {
@@ -148,15 +130,20 @@ export async function prismaFileUpload(req, res) {
           id: req.params.folder,
         },
       });
-
-      console.log(("folder data: ", folder));
-
-      console.log("folder contents: ", folder.contents);
-
-      folder.contents.push({ id: prismaUploadData.id, type: "file" });
-
-      console.log("folder contents after addition: ", folder.contents);
     }
+
+    // Add prisma upload entry
+    const prismaUploadData = await prisma.file.create({
+      data: {
+        name: req.file.originalname,
+        publicId: publicId,
+        url: uploadUrl,
+        userId: req.user.id,
+        folderId: folder.id,
+      },
+    });
+
+    folder.contents.push({ id: prismaUploadData.id, type: "file" });
 
     await prisma.folders.update({
       where: {
@@ -164,6 +151,15 @@ export async function prismaFileUpload(req, res) {
       },
       data: {
         contents: folder.contents,
+      },
+    });
+
+    await prisma.file.update({
+      where: {
+        id: prismaUploadData.id,
+      },
+      data: {
+        folderId: folder.id,
       },
     });
   } catch (e) {
