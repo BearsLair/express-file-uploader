@@ -30,8 +30,6 @@ export async function postRegistration(req, res) {
       },
     });
 
-    console.log("user data: ", user);
-
     await prisma.folders.create({
       data: {
         contents: [],
@@ -39,8 +37,6 @@ export async function postRegistration(req, res) {
         userId: user.id,
       },
     });
-
-    console.log(`Added user '${req.body.username}' to database.`);
 
     res.redirect("/");
   } catch (e) {
@@ -52,7 +48,6 @@ export async function postRegistration(req, res) {
 export async function displayHomeDirectory(req, res) {
   let homeFolder = {};
 
-  console.log("req.user.id: ", req.user.id);
   try {
     homeFolder = await prisma.folders.findFirst({
       where: {
@@ -63,8 +58,6 @@ export async function displayHomeDirectory(req, res) {
   } catch (e) {
     console.error("Error retrieving files: ", e);
   }
-
-  console.log("homeFolder: ", homeFolder);
 
   let folders = [];
   let files = [];
@@ -77,7 +70,6 @@ export async function displayHomeDirectory(req, res) {
           id: homeFolder.contents[i].id,
         },
       });
-      console.log("content pushed: ", content);
 
       folders.push(content);
     }
@@ -91,9 +83,6 @@ export async function displayHomeDirectory(req, res) {
       files.push(content);
     }
   }
-
-  console.log("folders: ", folders);
-  console.log("files: ", files);
 
   res.render("fileViewer", {
     user: req.user,
@@ -113,8 +102,6 @@ export async function prismaFileUpload(req, res) {
       uploadUrl = result.url;
       publicId = result.public_id;
     });
-
-    console.log("uploadUrl: ", uploadUrl, "publicId: ", publicId);
 
     if (req.params.folder === "home") {
       folder = await prisma.folders.findFirst({
@@ -199,8 +186,6 @@ export async function fileDetails(req, res) {
       },
     });
 
-    console.log("File retrieved: ", file);
-
     res.render("details", { file: file });
   } catch (err) {
     console.error("Error retrieving file details: ", err);
@@ -266,17 +251,13 @@ export async function viewFolder(req, res) {
         },
       })
       .then((result) => {
-        console.log("result... ", result);
         data = result;
       });
-
-    console.log("final data: ", data);
   } catch (err) {
     console.error("Error, retrieving folder", err);
   }
 
   const folderContents = data.contents;
-  console.log(folderContents);
 
   let content = {};
 
@@ -301,13 +282,70 @@ export async function viewFolder(req, res) {
     }
   }
 
-  console.log("folders array...", folders);
-  console.log("files array...", files);
-
   res.render("folder", {
     id: data.id,
     name: data.name,
     folders: folders,
     files: files,
   });
+}
+
+export async function deleteFiles(req, res) {
+  try {
+    // Find file to delete in Prisma File db
+    const fileToDelete = await prisma.file.findFirst({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    console.log("fileToDelete: ", fileToDelete);
+
+    // Find the folder containing the file to delete
+    // in Prisma Folders db
+    let folder = await prisma.folders.findFirst({
+      where: {
+        id: fileToDelete.folderId,
+      },
+    });
+
+    console.log("folder: ", folder);
+
+    // Remove entry from folder
+    const index = folder.contents.findIndex((file) => {
+      return file.id === fileToDelete.id;
+    });
+
+    console.log("index to delete: ", index);
+
+    folder.contents.splice(index, 1);
+
+    console.log("Array after splice", folder.contents);
+    console.log("folder id", folder.id);
+
+    await prisma.folders.update({
+      where: {
+        id: folder.id,
+      },
+      data: {
+        contents: folder.contents,
+      },
+    });
+
+    //   // Remove file from Cloudinary storage
+    //   cloudinary.uploader
+    //     .destroy(fileToDelete.publicId)
+    //     .then((result) => console.log(result));
+
+    // Remove file from Prisma File db
+    await prisma.file.delete({
+      where: {
+        id: fileToDelete.id,
+      },
+    });
+
+    res.redirect("/home");
+  } catch (err) {
+    console.error("Error deleting file: ", err);
+  }
 }
