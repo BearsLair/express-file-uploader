@@ -59,6 +59,8 @@ export async function displayHomeDirectory(req, res) {
     console.error("Error retrieving files: ", e);
   }
 
+  console.log("homeFolder", homeFolder);
+
   let folders = [];
   let files = [];
   let content = {};
@@ -332,10 +334,10 @@ export async function deleteFiles(req, res) {
       },
     });
 
-    //   // Remove file from Cloudinary storage
-    //   cloudinary.uploader
-    //     .destroy(fileToDelete.publicId)
-    //     .then((result) => console.log(result));
+    // Remove file from Cloudinary storage
+    cloudinary.uploader
+      .destroy(fileToDelete.publicId)
+      .then((result) => console.log("cloudinary deletion: ", result));
 
     // Remove file from Prisma File db
     await prisma.file.delete({
