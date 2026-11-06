@@ -42,6 +42,7 @@ model File {
 // TODO: Home directory boolean
 model Folders {
   id String @id @default(uuid())
+  containingFolderId String @default("home")
   name String @default("home")
   contents Json[]
   home Boolean @default(false)
