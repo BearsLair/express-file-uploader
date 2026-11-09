@@ -192,6 +192,7 @@ export async function fileDetails(req, res) {
   }
 }
 // TODO: MUST POINT BACK TO CONTAINING FOLDER
+// SO IT DELETES IT FROM CONTAINTING FOLDER'S CONTENTS
 export async function createFolder(req, res) {
   const folderName = req.body.folder;
   const currentFolder = req.params.current_folder;
@@ -218,6 +219,7 @@ export async function createFolder(req, res) {
     data: {
       name: folderName,
       contents: [],
+      containingFolderId: currFolderData.id,
       userId: req.user.id,
     },
   });
@@ -233,7 +235,11 @@ export async function createFolder(req, res) {
     },
   });
 
-  res.redirect("/home");
+  if (currFolderData.name === "home") {
+    res.redirect("/home");
+  } else {
+    res.redirect(`/folder/ + ${currFolderData.id}`);
+  }
 }
 
 export async function viewFolder(req, res) {
@@ -351,6 +357,7 @@ export async function deleteFile(req, res) {
 }
 
 // TODO: MUST POINT BACK TO CONTAINING FOLDER
+// SO IT DELETES IT FROM CONTAINTING FOLDER'S CONTENTS
 export async function deleteFolder(req, res) {
   try {
     const folder = await prisma.folders.findFirst({
