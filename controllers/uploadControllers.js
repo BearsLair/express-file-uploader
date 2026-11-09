@@ -245,6 +245,8 @@ export async function createFolder(req, res) {
 export async function viewFolder(req, res) {
   const folderId = req.params.folder;
 
+  console.log("folderId: ", folderId);
+
   let data = {};
   let folders = [];
   let files = [];
@@ -263,17 +265,22 @@ export async function viewFolder(req, res) {
     console.error("Error, retrieving folder", err);
   }
 
+  // PROBLEM //
   const folderContents = data.contents;
+
+  console.log("folderContents: ", folderContents);
 
   let content = {};
 
   for (let i = 0; i < folderContents.length; i++) {
     if (folderContents[i].type === "folder") {
-      content = await prisma.file.findFirst({
+      content = await prisma.folders.findFirst({
         where: {
           id: folderContents[i].id,
         },
       });
+
+      console.log("In For Loop, content: ", content);
 
       folders.push(content);
     }
@@ -287,6 +294,9 @@ export async function viewFolder(req, res) {
       files.push(content);
     }
   }
+
+  console.log("folders: ", folders);
+  console.log("files: ", files);
 
   res.render("folder", {
     id: data.id,
