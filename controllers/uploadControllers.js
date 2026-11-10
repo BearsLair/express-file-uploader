@@ -265,7 +265,6 @@ export async function viewFolder(req, res) {
     console.error("Error, retrieving folder", err);
   }
 
-  // PROBLEM //
   const folderContents = data.contents;
 
   console.log("folderContents: ", folderContents);
@@ -366,8 +365,6 @@ export async function deleteFile(req, res) {
   }
 }
 
-// TODO: MUST POINT BACK TO CONTAINING FOLDER
-// SO IT DELETES IT FROM CONTAINTING FOLDER'S CONTENTS
 export async function deleteFolder(req, res) {
   try {
     const folder = await prisma.folders.findFirst({
@@ -378,11 +375,49 @@ export async function deleteFolder(req, res) {
 
     console.log("folder: ", folder);
 
-    // prisma.folders.delete({
-    //   where: {
-    //     id: req.params.id,
-    //   },
-    // });
+    const containingFolder = await prisma.folders.findFirst({
+      where: {
+        id: folder.containingFolderId,
+      },
+    });
+
+    console.log("containingFolder: ", containingFolder);
+
+    console.log("containingFolder.id: ", containingFolder.id);
+    console.log("folder.containingFolderId: ", folder.containingFolderId);
+
+    const index = containingFolder.contents.findIndex((item) => {
+      return item.id === folder.id;
+    });
+
+    console.log("index: ", index);
+
+    containingFolder.contents.splice(index, 1);
+
+    await prisma.folders.update({
+      where: {
+        id: containingFolder.id,
+      },
+      data: {
+        contents: containingFolder.contents,
+      },
+    });
+
+    // if (folder.contents.length !== 0) {
+    //   for (let i = 0; i < folder.contents; i++) {
+    //     if (folder.contents[i].type === "file") {
+    //       cloudinary.uploader
+    //         .destroy(fileToDelete.publicId)
+    //         .then((result) => console.log("cloudinary deletion: ", result));
+    //     }
+    //   }
+    // }
+
+    await prisma.folders.delete({
+      where: {
+        id: folder.id,
+      },
+    });
 
     res.redirect("/home");
   } catch (err) {
