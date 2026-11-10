@@ -14,17 +14,6 @@
       <input type="file" name="file" />
       <button type="submit">Submit File</button>
     </form>
-    <form style="margin-top: 10px;margin-bottom: 15px;" action=<%= "/newFolder/" + id %> method="POST">
-        <label for="folder">Add Folder to </label>
-        <input type="text" name="folder" />
-        <button type="submit">Add Folder</button>
-      </form>
-    <% if (folders.length === 0) {%>
-        <p>No Folders Added</p>
-    <% } else { %>
-        <% folders.map(folder => {%>
-        <a href=<%= "/folder/" + folder.id %> >📁<%= folder.name %> </a>      
-    <% })} %>
     <% if (files.length === 0) {%>
       <p>No files added to folder yet.</p>
       <% } else { %>
