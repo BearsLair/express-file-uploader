@@ -7,6 +7,7 @@
   </head>
   <body>
     <h1>User Registration</h1>
+    <%- include("./partials/error.ejs") %>
     <form action="/register" method="POST">
       <label for="username">Username</label>
       <input name="username" type="text" placeholder="username" />

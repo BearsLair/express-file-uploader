@@ -2,6 +2,7 @@ import { prisma } from "../lib/prisma.js";
 import bcrypt from "bcryptjs";
 import fs from "fs/promises";
 import { v2 as cloudinary } from "cloudinary";
+import { validationResult } from "express-validator";
 
 export async function getLoginPage(req, res) {
   try {
@@ -13,7 +14,10 @@ export async function getLoginPage(req, res) {
 
 export async function getRegistrationPage(req, res) {
   try {
-    res.render("register");
+    res.render("register", {
+      errors: [],
+      formData: [],
+    });
   } catch (e) {
     console.error("Error retrieving registration page: ", e);
   }
@@ -21,6 +25,15 @@ export async function getRegistrationPage(req, res) {
 
 export async function postRegistration(req, res) {
   try {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).render("register", {
+        errors: errors.array(),
+        formData: req.body,
+      });
+    }
+
     const hash = bcrypt.hashSync(req.body.password, 10);
 
     const user = await prisma.user.create({

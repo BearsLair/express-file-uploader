@@ -1,6 +1,6 @@
 import { body } from "express-validator";
 
-export default validators = [
+const validators = [
   body("username")
     .trim()
     .notEmpty()
@@ -36,3 +36,5 @@ export default validators = [
       return true;
     }),
 ];
+
+export default validators;

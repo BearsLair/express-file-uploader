@@ -2,6 +2,7 @@ import { Router } from "express";
 const indexRouter = Router();
 import passport from "passport";
 import upload from "../config/diskStorage.js";
+import validators from "../validators/register_validation.js";
 
 import {
   getLoginPage,
@@ -34,7 +35,7 @@ indexRouter.post("/upload/:folder", upload.single("file"), prismaFileUpload);
 // TODO: Add form validators
 indexRouter.get("/register", getRegistrationPage);
 
-indexRouter.post("/register", postRegistration);
+indexRouter.post("/register", validators, postRegistration);
 
 indexRouter.get("/log-out", function (req, res, next) {
   req.logout(function (err) {
