@@ -41,10 +41,10 @@ app.use((err, req, res, next) => {
     if (err.code === "LIMIT_FILE_SIZE") {
       return res
         .status(400)
-        .render("fileSize", { error: "File too large. Must be under 10MB!" });
+        .render("errorPage", { error: "File too large. Must be under 10MB!" });
     }
   }
-  res.render("fileSize", { error: "Oops! Something went wrong..." });
+  res.render("errorPage", { error: "Oops! Something went wrong..." });
 });
 
 const PORT = process.env.PORT || 3000;

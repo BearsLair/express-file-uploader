@@ -70,6 +70,9 @@ export async function displayHomeDirectory(req, res) {
     });
   } catch (e) {
     console.error("Error retrieving files: ", e);
+    res.render("errorPage", {
+      error: "Uh. Error retrieving your files... Please try again later",
+    });
   }
 
   let folders = [];
@@ -164,6 +167,9 @@ export async function prismaFileUpload(req, res) {
     });
   } catch (e) {
     console.error("Error updating prisma/upload to cloudinary: ", e);
+    res.render("errorPage", {
+      error: "Oops! Something went wrong uploading your file!",
+    });
   } finally {
     const filePath = req.file.path;
 
@@ -182,8 +188,14 @@ export async function prismaFileUpload(req, res) {
     } catch (err) {
       if (err.code === "ENOENT") {
         console.log("File does not exist");
+        res.render("errorPage", {
+          error: "Something went wrong when uploading the file!",
+        });
       } else {
         console.error("Error deleting file: ", err);
+        res.render("errorPage", {
+          error: "Something went wrong when uploading the file!",
+        });
       }
     }
   }
@@ -202,61 +214,71 @@ export async function fileDetails(req, res) {
     res.render("details", { file: file });
   } catch (err) {
     console.error("Error retrieving file details: ", err);
+    res.render("errorPage", {
+      error: "Oops! There was an error retrieving file details!",
+    });
   }
 }
 
 export async function createFolder(req, res) {
-  const errors = validationResult(req);
+  try {
+    const errors = validationResult(req);
 
-  if (!errors.isEmpty()) {
-    return res.redirect("/home");
-  }
+    if (!errors.isEmpty()) {
+      return res.redirect("/home");
+    }
 
-  const folderName = req.body.folder;
-  const currentFolder = req.params.current_folder;
-  let currFolderData = {};
+    const folderName = req.body.folder;
+    const currentFolder = req.params.current_folder;
+    let currFolderData = {};
 
-  if (currentFolder === "home") {
-    currFolderData = await prisma.folders.findFirst({
-      where: {
+    if (currentFolder === "home") {
+      currFolderData = await prisma.folders.findFirst({
+        where: {
+          userId: req.user.id,
+          home: true,
+        },
+      });
+    } else {
+      currFolderData = await prisma.folders.findFirst({
+        where: {
+          id: currentFolder,
+        },
+      });
+    }
+
+    let contents = currFolderData.contents;
+
+    const newFolder = await prisma.folders.create({
+      data: {
+        name: folderName,
+        contents: [],
+        containingFolderId: currFolderData.id,
         userId: req.user.id,
-        home: true,
       },
     });
-  } else {
-    currFolderData = await prisma.folders.findFirst({
+
+    contents.push({ id: newFolder.id, type: "folder" });
+
+    const results = await prisma.folders.update({
       where: {
-        id: currentFolder,
+        id: currFolderData.id,
+      },
+      data: {
+        contents: contents,
       },
     });
-  }
 
-  let contents = currFolderData.contents;
-
-  const newFolder = await prisma.folders.create({
-    data: {
-      name: folderName,
-      contents: [],
-      containingFolderId: currFolderData.id,
-      userId: req.user.id,
-    },
-  });
-
-  contents.push({ id: newFolder.id, type: "folder" });
-
-  const results = await prisma.folders.update({
-    where: {
-      id: currFolderData.id,
-    },
-    data: {
-      contents: contents,
-    },
-  });
-
-  if (currFolderData.name === "home") {
-    res.redirect("/home");
-  } else {
-    res.redirect(`/folder/ + ${currFolderData.id}`);
+    if (currFolderData.name === "home") {
+      res.redirect("/home");
+    } else {
+      res.redirect(`/folder/ + ${currFolderData.id}`);
+    }
+  } catch (err) {
+    console.error("Error creating folder: ", err);
+    res.render("errorPage", {
+      error: "Oops! Something went wrong when creating the folder",
+    });
   }
 }
 
@@ -281,6 +303,10 @@ export async function viewFolder(req, res) {
       });
   } catch (err) {
     console.error("Error, retrieving folder", err);
+    res.render("errorPage", {
+      error:
+        "Oops! Something went wrong when attempting to retrieve the folder!",
+    });
   }
 
   const folderContents = data.contents;
@@ -380,6 +406,9 @@ export async function deleteFile(req, res) {
     res.redirect("/home");
   } catch (err) {
     console.error("Error deleting file: ", err);
+    res.render("errorPage", {
+      error: "Oops! Something went wrong when deleting the file!",
+    });
   }
 }
 
@@ -452,7 +481,9 @@ export async function deleteFolder(req, res) {
     console.log("Link to folder in containing folder deleted");
   } catch (err) {
     console.error("Error deleting folder: ", err);
-    res.redirect("/home");
+    res.render("errorPage", {
+      error: "Oops! Something went wrong when deleting the folder!",
+    });
   } finally {
     await prisma.folders.update({
       where: {
