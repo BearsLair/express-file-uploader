@@ -8,8 +8,9 @@ import expressSession from "express-session";
 import { prisma } from "./lib/prisma.js";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import passport from "passport";
-
 import "./config/passport.js";
+
+import multer from "multer";
 
 app.use(
   expressSession({
@@ -34,6 +35,17 @@ app.set("views", path.join(import.meta.dirname, "/views"));
 
 app.use(express.urlencoded({ extended: true }));
 app.use("/", indexRouter);
+
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return res
+        .status(400)
+        .render("fileSize", { error: "File too large. Must be under 10MB!" });
+    }
+  }
+  res.render("fileSize", { error: "Oops! Something went wrong..." });
+});
 
 const PORT = process.env.PORT || 3000;
 
