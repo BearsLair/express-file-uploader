@@ -4,9 +4,9 @@ const validators = [
   body("username")
     .trim()
     .notEmpty()
-    .withMessage("First name cannot be empty.")
+    .withMessage("Username cannot be empty.")
     .isLength({ max: 30 })
-    .withMessage("First name must be less than 30 characters"),
+    .withMessage("Username must be less than 30 characters"),
   body("password")
     .trim()
     .isStrongPassword({

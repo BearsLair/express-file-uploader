@@ -204,9 +204,14 @@ export async function fileDetails(req, res) {
     console.error("Error retrieving file details: ", err);
   }
 }
-// TODO: MUST POINT BACK TO CONTAINING FOLDER
-// SO IT DELETES IT FROM CONTAINTING FOLDER'S CONTENTS
+
 export async function createFolder(req, res) {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.redirect("/home");
+  }
+
   const folderName = req.body.folder;
   const currentFolder = req.params.current_folder;
   let currFolderData = {};

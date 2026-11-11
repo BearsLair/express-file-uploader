@@ -6,8 +6,5 @@ File uploader with Express JS backend, log-in (Passport Local), Prisma (Postgres
 
 Delete files from Prisma and Cloudinary
 Delete folders and their contents (from Prisma and Cloudinary)
-Back button to go back up the directory to top-level
-Replace a file already uploaded???
-Show directory location???
-
-Urls for guests to view files from a created account.
+File validation (restrict files too large)
+Show directory location??? (If it's simple)

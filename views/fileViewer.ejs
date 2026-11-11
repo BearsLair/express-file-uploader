@@ -19,6 +19,7 @@
         <input type="file" name="file" />
         <button type="submit">Submit File</button>
       </form>
+      <%- include("./partials/error.ejs") %>
       <form style="margin-top: 10px;margin-bottom: 15px;" action="/newFolder/home" method="POST">
         <label for="folder">Add Folder to Home Directory</label>
         <input type="text" name="folder" />

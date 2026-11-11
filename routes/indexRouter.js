@@ -3,6 +3,7 @@ const indexRouter = Router();
 import passport from "passport";
 import upload from "../config/diskStorage.js";
 import validators from "../validators/register_validation.js";
+import folderValidation from "../validators/folder_validation.js";
 
 import {
   getLoginPage,
@@ -48,7 +49,7 @@ indexRouter.get("/log-out", function (req, res, next) {
 
 indexRouter.get("/details/:id", fileDetails);
 
-indexRouter.post("/newFolder/:current_folder", createFolder);
+indexRouter.post("/newFolder/:current_folder", folderValidation, createFolder);
 
 indexRouter.get("/folder/:folder", viewFolder);
 
