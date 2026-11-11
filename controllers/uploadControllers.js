@@ -366,34 +366,76 @@ export async function deleteFile(req, res) {
 }
 
 export async function deleteFolder(req, res) {
+  let folder = {};
+  let containingFolder = {};
+
   try {
-    const folder = await prisma.folders.findFirst({
+    // Retrieve folder to be deleted with Prisma
+    folder = await prisma.folders.findFirst({
       where: {
         id: req.params.id,
       },
     });
 
-    console.log("folder: ", folder);
-
-    const containingFolder = await prisma.folders.findFirst({
+    // Retrieve the above folder's containing folder with Prisma,
+    // to delete link to folder to be deleted from
+    // the containing folder
+    containingFolder = await prisma.folders.findFirst({
       where: {
         id: folder.containingFolderId,
       },
     });
 
-    console.log("containingFolder: ", containingFolder);
+    // Loop through files in folder to be deleted, to delete
+    // files from Cloudinary (deleting a folder permanently removes
+    // it's contents)
 
-    console.log("containingFolder.id: ", containingFolder.id);
-    console.log("folder.containingFolderId: ", folder.containingFolderId);
+    let deleteFile = {};
+
+    console.log("folder.contents: ", folder.contents);
+    console.log("folder.contents length: ", folder.contents.length);
+
+    console.log("For loop should initiate here...");
+    if (folder.contents.length > 0) {
+      console.log("Loop condition met...");
+      for (let i = 0; i < folder.contents.length; i++) {
+        // Find file to delete with Prisma
+        deleteFile = await prisma.file.findFirst({
+          where: {
+            id: folder.contents[i].id,
+          },
+        });
+
+        console.log("File to delete from cloudinary: ", deleteFile);
+
+        // Delete file from cloudinary
+        cloudinary.uploader
+          .destroy(deleteFile.publicId)
+          .then((result) => console.log("cloudinary file deleted: ", result));
+
+        // Finally, delete file from database with Prisma
+        await prisma.file.delete({
+          where: {
+            id: deleteFile.id,
+          },
+        });
+        console.log("File deleted from database");
+      }
+    }
 
     const index = containingFolder.contents.findIndex((item) => {
       return item.id === folder.id;
     });
 
-    console.log("index: ", index);
+    console.log("index to delete in containing folder: ", index);
 
     containingFolder.contents.splice(index, 1);
 
+    console.log("Link to folder in containing folder deleted");
+  } catch (err) {
+    console.error("Error deleting folder: ", err);
+    res.redirect("/home");
+  } finally {
     await prisma.folders.update({
       where: {
         id: containingFolder.id,
@@ -403,16 +445,6 @@ export async function deleteFolder(req, res) {
       },
     });
 
-    // if (folder.contents.length !== 0) {
-    //   for (let i = 0; i < folder.contents; i++) {
-    //     if (folder.contents[i].type === "file") {
-    //       cloudinary.uploader
-    //         .destroy(fileToDelete.publicId)
-    //         .then((result) => console.log("cloudinary deletion: ", result));
-    //     }
-    //   }
-    // }
-
     await prisma.folders.delete({
       where: {
         id: folder.id,
@@ -420,7 +452,5 @@ export async function deleteFolder(req, res) {
     });
 
     res.redirect("/home");
-  } catch (err) {
-    console.error("Error deleting folder: ", err);
   }
 }
